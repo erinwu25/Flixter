@@ -1,6 +1,7 @@
 package com.example.flixter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.flixter.R;
+import com.example.flixter.ViewDetails;
 import com.example.flixter.model.Movie;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -53,7 +57,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return movies.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvTitle;
         TextView tvOverview;
@@ -66,6 +70,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             tvOverview = itemView.findViewById(R.id.tvOverview);
             ivPoster = itemView.findViewById(R.id.ivPoster);
 
+            //itemView's onClickListener
+            itemView.setOnClickListener(this);
+
         }
 
         public void bind(Movie movie) {
@@ -73,19 +80,44 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             tvOverview.setText(movie.getOverview());
 
             String imageUrl;
+            int placeholder;
 
             // if phone in landscape, set imageUrl to backdrop image
             if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
             {
                 imageUrl = movie.getBackdropPath();
+                placeholder = R.drawable.flicks_backdrop_placeholder;
             }
             // else default to poster image
             else
             {
                 imageUrl = movie.getPosterPath();
+                placeholder = R.drawable.flicks_movie_placeholder;
             }
 
-            Glide.with(context).load(imageUrl).into(ivPoster);
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(placeholder) // have placeholder img
+                    .into(ivPoster);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            // get item position
+            int position = getAdapterPosition();
+
+            // ensure position is valid (actually exists in view)
+            if (position != RecyclerView.NO_POSITION)
+            {
+                Movie movie = movies.get(position); // get the movie at the position
+                Intent intent = new Intent(context, ViewDetails.class); // create intent for new activity
+                intent.putExtra(Movie.class.getSimpleName(), Parcels.wrap(movie)); // serialize movie (check what this means) using parceler
+                context.startActivity(intent); // show the activity
+            }
+
+
+
         }
     }
 }
