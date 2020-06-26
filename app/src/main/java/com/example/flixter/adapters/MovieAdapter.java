@@ -3,6 +3,7 @@ package com.example.flixter.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.flixter.R;
 import com.example.flixter.ViewDetails;
 import com.example.flixter.model.Movie;
@@ -21,6 +23,8 @@ import com.example.flixter.model.Movie;
 import org.parceler.Parcels;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     Context context;
@@ -79,6 +83,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             tvTitle.setText(movie.getTitle());
             tvOverview.setText(movie.getOverview());
 
+            // set color of text
+            tvTitle.setTextColor(Color.rgb(190, 190, 190));
+            tvOverview.setTextColor(Color.rgb(190, 190, 190));
+
             String imageUrl;
             int placeholder;
 
@@ -98,6 +106,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
             Glide.with(context)
                     .load(imageUrl)
                     .placeholder(placeholder) // have placeholder img
+                    .transform(new RoundedCornersTransformation(15, 3))
                     .into(ivPoster);
 
         }
